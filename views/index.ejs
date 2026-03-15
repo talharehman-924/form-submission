@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Signup Form</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-app">
+      <div class="header">
+        <div class="brand">
+          <div class="mark">FS</div>
+          <div>
+            <div class="title">Form Submission</div>
+            <div class="small-muted">Create profiles quickly — beautiful cards feed</div>
+          </div>
+        </div>
+        <div class="small-muted">Client Preview</div>
+      </div>
+
+      <div class="layout">
+        <aside>
+          <div class="card-surface">
+            <h3 style="margin-top:0;margin-bottom:12px">Sign Up</h3>
+            <form class="signup-form" method="post" enctype="multipart/form-data">
+              <div class="field">
+                <label class="label">Photo</label>
+                <div id="uploadArea" class="upload-area">
+                  <div id="photoPreview" class="preview">
+                    <img id="photoPreviewImg" src="" alt="preview" style="display:block;width:100%;height:100%;object-fit:cover">
+                    <div class="empty-state">Click or drop image (optional)</div>
+                  </div>
+                  <input style="display:none" type="file" name="photo" accept="image/*">
+                  <div class="small-muted">PNG, JPG, max 5MB</div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Name</label>
+                <input class="input" type="text" name="name" placeholder="Full name" required>
+              </div>
+
+              <div class="field">
+                <label class="label">Mobile</label>
+                <input class="input" type="text" name="mobile" placeholder="03xx-xxxxxxx">
+              </div>
+
+              <div class="field">
+                <label class="label">Address</label>
+                <textarea name="address" class="input" placeholder="Address"></textarea>
+              </div>
+
+              <div class="row mt-2">
+                <button class="btn-primary" type="submit">Sign Up</button>
+              </div>
+            </form>
+          </div>
+        </aside>
+
+        <main>
+          <div class="grid-cards">
+            <% if (users.length === 0) { %>
+              <div class="card-surface empty-state">No submissions yet — the newest profiles will appear here.</div>
+            <% } %>
+            <% users.forEach(function(user){ %>
+              <div class="profile-card">
+                <% if (user.photo) { %>
+                  <img class="card-img" src="/uploads/<%= user.photo %>" alt="profile">
+                <% } else { %>
+                  <div class="card-img"></div>
+                <% } %>
+                <div class="card-body">
+                  <div class="card-title"><%= user.name %></div>
+                  <p class="card-meta"><strong>Mobile:</strong> <%= user.mobile || '—' %></p>
+                  <p class="card-meta"><strong>Address:</strong> <%= user.address || '—' %></p>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

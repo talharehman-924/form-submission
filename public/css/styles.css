@@ -1,0 +1,71 @@
+:root{
+  --color-primary: #0f766e;
+  --color-accent: #f59e0b;
+  --color-bg: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-muted: #6b7280;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --shadow-sm: 0 6px 18px rgba(15,23,42,0.06);
+  --shadow-lg: 0 20px 40px rgba(15,23,42,0.08);
+  --space-1: 8px; --space-2:16px; --space-3:24px; --space-4:32px;
+  --max-width-form: 480px;
+  --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+.body-bg{
+  position:fixed;inset:0;z-index:-1;background:radial-gradient(1200px 600px at 10% 20%, rgba(15,118,110,0.08), transparent 10%), radial-gradient(800px 400px at 90% 80%, rgba(245,158,11,0.06), transparent 10%), linear-gradient(180deg, var(--color-bg) 0%, #ffffff 100%);
+}
+body{
+  margin:0;
+  font-family:var(--font-family);
+  color:#0f172a;
+  -webkit-font-smoothing:antialiased;
+}
+.container-app{max-width:1200px;margin:36px auto;padding:0 16px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary),#08716b);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:0 8px 24px rgba(15,118,110,0.18);transform:skewX(-6deg)}
+.title{font-size:20px;font-weight:600}
+.layout{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:992px){.layout{grid-template-columns:360px 1fr}}
+/* Form card */
+.card-surface{background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.55));border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:20px;border:1px solid rgba(255,255,255,0.6);backdrop-filter: blur(6px)}
+.signup-form{max-width:var(--max-width-form)}
+.field{margin-bottom:14px}
+.label{display:block;font-size:13px;color:var(--color-muted);margin-bottom:6px}
+.input, textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e6e9ef;background:transparent}
+textarea{min-height:90px;resize:vertical}
+.btn-primary{background:var(--color-primary);color:#fff;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(15,118,110,0.12);transition:transform .08s ease, box-shadow .12s}
+.btn-primary:active{transform:scale(.995)}
+.upload-area{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px;border-radius:12px;border:1px dashed rgba(15,23,42,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.35));cursor:pointer;transition:box-shadow .12s, transform .12s}
+.upload-area:hover{box-shadow:0 12px 30px rgba(15,23,42,0.08);transform:translateY(-3px)}
+.upload-area.drag{box-shadow:0 16px 40px rgba(15,23,42,0.12);border-color:rgba(15,118,110,0.6)}
+.preview{width:100%;height:220px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#f8fafc,#eef2f6);display:flex;align-items:center;justify-content:center;position:relative}
+.preview img{width:100%;height:100%;object-fit:cover;display:block}
+.small-muted{font-size:13px;color:var(--color-muted)}
+/* Cards */
+.grid-cards{display:grid;grid-template-columns:repeat(1,1fr);gap:18px}
+@media(min-width:576px){.grid-cards{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:992px){.grid-cards{grid-template-columns:repeat(3,1fr)}}
+.profile-card{background:linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.5));border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,0.08);overflow:hidden;transition:transform .16s cubic-bezier(.2,.9,.3,1), box-shadow .16s}
+.profile-card:hover{transform:translateY(-10px);box-shadow:0 28px 60px rgba(15,23,42,0.12)}
+.card-img{height:180px;background:linear-gradient(180deg,#f8fafc,#e6eef2);display:block}
+.card-body{padding:14px}
+.card-title{font-weight:600;margin:0 0 6px 0}
+.card-meta{font-size:13px;color:var(--color-muted);margin:0}
+.empty-state{padding:36px;text-align:center;color:var(--color-muted)}
+/* Utilities */
+.row{display:flex;gap:12px}
+.mt-2{margin-top:12px}
+.text-center{text-align:center}
+`/** small responsive tweaks **/`
+@media(max-width:420px){.preview{height:160px}}
+/* focus states */
+.input:focus, textarea:focus, .btn-primary:focus{outline:none;box-shadow:0 0 0 4px rgba(15,118,110,0.14)}
+/* preview state */
+.preview .empty-state{position:absolute;color:var(--color-muted);font-weight:500}
+.preview.has-image .empty-state{display:none}
+/* toast (simple) */
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;box-shadow:var(--shadow-lg)}
