@@ -105,13 +105,13 @@ app.post('/', upload.single('photo'), async (req, res) => {
     // insert metadata into Supabase table `users`
     const { data, error } = await supabase.from('users').insert([{ name, mobile, address, photo: publicUrl }]);
     if (error) {
-      console.error('Supabase insert error:', error);
-      return res.status(500).send('DB insert error');
+      console.error('Supabase insert error:', JSON.stringify(error, null, 2));
+      return res.status(500).send(`DB insert error: ${error.message}`);
     }
     return res.redirect('/');
   } catch (err) {
-    console.error(err);
-    return res.status(500).send('Server error');
+    console.error('Server catch error:', err);
+    return res.status(500).send(`Server error: ${err.message}`);
   }
 });
 
