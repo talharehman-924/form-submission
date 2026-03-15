@@ -68,7 +68,7 @@
             <% users.forEach(function(user){ %>
               <div class="profile-card">
                 <% if (user.photo) { %>
-                  <img class="card-img" src="/uploads/<%= user.photo %>" alt="profile">
+                  <img class="card-img" src="<%= user.photo %>" alt="profile">
                 <% } else { %>
                   <div class="card-img"></div>
                 <% } %>
@@ -84,27 +84,5 @@
       </div>
     </div>
     <script src="/js/main.js"></script>
-    <script>
-      // Override form submit to post to serverless API /api/users using fetch + FormData
-      document.addEventListener('DOMContentLoaded', function(){
-        const form = document.getElementById('signupForm');
-        form.addEventListener('submit', async function(e){
-          e.preventDefault();
-          const btn = document.getElementById('submitBtn');
-          btn.disabled = true; btn.textContent = 'Submitting...';
-          const fd = new FormData(form);
-          try {
-            const res = await fetch('/api/users', { method: 'POST', body: fd });
-            if (!res.ok) throw new Error('Server error');
-            window.location.reload();
-          } catch (err) {
-            alert('Submit failed');
-            console.error(err);
-            btn.disabled = false; btn.textContent = 'Sign Up';
-          }
-        });
-      });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -1,9 +1,27 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+// load .env in development and report if dotenv is missing
+try {
+  const result = require('dotenv').config();
+  if (result.error) {
+    console.warn('dotenv present but failed to parse .env:', result.error);
+  } else {
+    console.log('dotenv loaded from .env');
+  }
+} catch (e) {
+  console.warn('dotenv not installed; .env file will not be loaded automatically.');
+  console.warn('Run: npm install dotenv');
+}
 const multer = require('multer');
 const mime = require('mime-types');
-const { createClient } = require('@supabase/supabase-js');
+let createClient;
+try {
+  createClient = require('@supabase/supabase-js').createClient;
+} catch (err) {
+  console.error("\nMissing required package '@supabase/supabase-js'.\nPlease run 'npm install' in the project folder (or install the package manually):\n\n  npm install @supabase/supabase-js mime-types busboy\n\nAfter installation, restart the server.\n");
+  process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,12 +36,18 @@ fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
 // Supabase client (server-side key required)
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hxmxxufruldtocuhuzlj.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.warn('Warning: SUPABASE_URL or SUPABASE_SERVICE_KEY not set. Please set env vars.');
+// debug: show where we are and whether .env was found (does not print the secret)
+console.log('cwd=', process.cwd());
+console.log('__dirname=', __dirname);
+console.log('.env exists at cwd?', fs.existsSync(path.join(process.cwd(), '.env')));
+console.log('SUPABASE_SERVICE_KEY present?', !!SUPABASE_SERVICE_KEY);
+if (!SUPABASE_SERVICE_KEY) {
+  console.error('\nError: SUPABASE_SERVICE_KEY is required to run this server.\nPlease create a local .env file (see .env.example) or set the environment variable:\n\n  SUPABASE_SERVICE_KEY=your_service_role_key_here\n\nThen restart the server.\n');
+  process.exit(1);
 }
-const supabase = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_KEY || '');
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // Express setup
 

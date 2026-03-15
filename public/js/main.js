@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function(){
   const previewEl = document.getElementById('photoPreview');
   const previewImg = document.getElementById('photoPreviewImg');
   const uploadArea = document.getElementById('uploadArea');
+  const signupForm = document.getElementById('signupForm');
+  const submitBtn = document.getElementById('submitBtn');
 
   function showPreview(file){
     if(!file) return;
@@ -27,5 +29,37 @@ document.addEventListener('DOMContentLoaded', function(){
     uploadArea.addEventListener('dragover', (e)=>{ e.preventDefault(); uploadArea.classList.add('drag'); });
     uploadArea.addEventListener('dragleave', ()=>{ uploadArea.classList.remove('drag'); });
     uploadArea.addEventListener('drop', (e)=>{ e.preventDefault(); uploadArea.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f){ fileInput.files = e.dataTransfer.files; showPreview(f); } });
+  }
+
+  // Form submit handler
+  if(signupForm){
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      try {
+        const formData = new FormData(signupForm);
+        const response = await fetch('/', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if(response.ok){
+          // Success - reload page to show new card
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          const text = await response.text();
+          alert('Submit failed: ' + text);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign Up';
+        }
+      } catch(error){
+        console.error('Submit error:', error);
+        alert('Submit failed: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign Up';
+      }
+    });
   }
 });

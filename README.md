@@ -24,6 +24,7 @@ Notes
 
 Supabase setup (quick):
 1. Create a free project at https://app.supabase.com/ and note the `SUPABASE_URL`.
+	- Example project URL (already set in this repo as default): `https://hxmxxufruldtocuhuzlj.supabase.co`
 2. Go to Settings → API and copy the `Service Role` key. Keep it secret and set it as `SUPABASE_SERVICE_KEY` in your environment.
 3. In the Storage section create a new bucket named `uploads` and set it to public (or configure access rules).
 4. Create the `users` table via SQL Editor with this SQL:
@@ -43,9 +44,11 @@ Environment variables (locally):
 
 Windows PowerShell example:
 ```powershell
-setx SUPABASE_URL "https://xyzcompany.supabase.co"
+setx SUPABASE_URL "https://hxmxxufruldtocuhuzlj.supabase.co"
 setx SUPABASE_SERVICE_KEY "your_service_role_key_here"
 ```
+
+Or create a `.env` based on `.env.example` in the project root for local development.
 
 Or create a `.env` locally and use a process manager to load envs. For Vercel set these in the Project → Settings → Environment Variables.
 
