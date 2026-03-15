@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function(){
-  const fileInput = document.querySelector('input[name="photo"]');
+  const fileInput = document.getElementById('fileInput');
   const previewEl = document.getElementById('photoPreview');
-  const previewImg = document.getElementById('photoPreviewImg');
   const uploadArea = document.getElementById('uploadArea');
   const signupForm = document.getElementById('signupForm');
   const submitBtn = document.getElementById('submitBtn');
@@ -10,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function(){
     if(!file) return;
     const reader = new FileReader();
     reader.onload = function(e){
-      previewImg.src = e.target.result;
-      previewEl.classList.add('has-image');
+      previewEl.innerHTML = `<img src="${e.target.result}" alt="preview" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      previewEl.classList.remove('empty');
     }
     reader.readAsDataURL(file);
   }
@@ -20,7 +19,10 @@ document.addEventListener('DOMContentLoaded', function(){
     fileInput.addEventListener('change', (e)=>{
       const f = e.target.files[0];
       if(f) showPreview(f);
-      else previewEl.classList.remove('has-image');
+      else {
+        previewEl.innerHTML = '<span>👤</span>';
+        previewEl.classList.add('empty');
+      }
     });
   }
 
@@ -28,7 +30,15 @@ document.addEventListener('DOMContentLoaded', function(){
     uploadArea.addEventListener('click', ()=>{ fileInput.click(); });
     uploadArea.addEventListener('dragover', (e)=>{ e.preventDefault(); uploadArea.classList.add('drag'); });
     uploadArea.addEventListener('dragleave', ()=>{ uploadArea.classList.remove('drag'); });
-    uploadArea.addEventListener('drop', (e)=>{ e.preventDefault(); uploadArea.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f){ fileInput.files = e.dataTransfer.files; showPreview(f); } });
+    uploadArea.addEventListener('drop', (e)=>{ 
+      e.preventDefault(); 
+      uploadArea.classList.remove('drag'); 
+      const f = e.dataTransfer.files[0]; 
+      if(f){ 
+        fileInput.files = e.dataTransfer.files; 
+        showPreview(f); 
+      } 
+    });
   }
 
   // Form submit handler
@@ -52,13 +62,13 @@ document.addEventListener('DOMContentLoaded', function(){
           const text = await response.text();
           alert('Submit failed: ' + text);
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign Up';
+          submitBtn.textContent = 'Register ➤';
         }
       } catch(error){
         console.error('Submit error:', error);
         alert('Submit failed: ' + error.message);
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Sign Up';
+        submitBtn.textContent = 'Register ➤';
       }
     });
   }
