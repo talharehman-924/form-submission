@@ -1,7 +1,7 @@
 {
-  "name": "form-submission",
+  "name": "business-listing",
   "version": "1.0.0",
-  "description": "Signup form with file uploads and Supabase storage (Node.js/Express)",
+  "description": "Business listing form with file uploads and Supabase storage (Node.js/Express)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
