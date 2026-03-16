@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function(){
           const text = await response.text();
           alert('Submit failed: ' + text);
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Register ➤';
+          submitBtn.textContent = 'Register Shop ➤';
         }
       } catch(error){
         console.error('Submit error:', error);
