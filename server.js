@@ -56,20 +56,36 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
 
-// Helper: fetch users from Supabase
-async function fetchUsers() {
-  if (!supabase) return [];
-  const { data, error } = await supabase.from('users').select('*').order('id', { ascending: false });
+// Helper: fetch users from Supabase with pagination
+async function fetchUsers(page = 1, limit = 10) {
+  if (!supabase) return { users: [], total: 0 };
+  const offset = (page - 1) * limit;
+  
+  const { data, count, error } = await supabase
+    .from('users')
+    .select('*', { count: 'exact' })
+    .order('id', { ascending: false })
+    .range(offset, offset + limit - 1);
+    
   if (error) {
     console.error('Supabase fetch error:', error);
-    return [];
+    return { users: [], total: 0 };
   }
-  return data || [];
+  return { users: data || [], total: count || 0 };
 }
 
 app.get('/', async (req, res) => {
-  const users = await fetchUsers();
-  res.render('index', { users });
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const { users, total } = await fetchUsers(page, limit);
+  const totalPages = Math.ceil(total / limit);
+  
+  res.render('index', { 
+    users, 
+    currentPage: page, 
+    totalPages,
+    totalCount: total
+  });
 });
 
 app.post('/', upload.single('photo'), async (req, res) => {
