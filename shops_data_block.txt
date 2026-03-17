@@ -1,13 +1,3 @@
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ override: true });
-
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
-const fs = require('fs');
-const path = require('path');
-
 const shopsData = [
   { "name": "Ac Repair and Service Centre", "address": "Near Taltala, Kolkata, West Bengal 700016, India", "mobile": "+91 62908 75643" },
   { "name": "A TO Z COOLING CENTER", "address": "Kolkata, West Bengal, India", "mobile": "+91 98307 68650" },
@@ -98,68 +88,5 @@ const shopsData = [
   { "name": "AirCon Service - AC Repairing Service Centre", "address": "Rajdanga Main Rd, Kasba, Kolkata, West Bengal 700107", "mobile": "+91 81001 34315" },
   { "name": "Rup Aircondition", "address": "87, Brick Field Rd, Kasba, Kolkata, West Bengal 700039", "mobile": "+91 97340 30627" },
   { "name": "CoolZone Refrigeration", "address": "34/1B, Kolkata, West Bengal 700012", "mobile": "+91 82524 05113" },
-  { "name": "Desire Multitech Solutions", "address": "1, Jannagar Rd, Park Circus, Kolkata, West Bengal 700017", "mobile": "+91 95251 98387" }
+  { "name": "Desire Multitech Solutions", "address": "1, Jannagar Rd, Park Circus, Kolkata, West Bengal 700017", "mobile": "+91 95251 98387" },
 ];
-
-const workingIds = [
-  "1581092918056-0c4c3acd3789", "1621905251189-08b45d6a269e", "1599933333394-84bc1ed5ca3d", "1545239351-ef35627ec75b",
-  "1584622781564-1d9876a13d00", "1486262715619-67b85e0b08d3", "1518770660439-4636190af475", "1563720223185-11003d516905",
-  "1527515637462-cff94eecc1ac", "1581094794329-c8112a89af12", "1631049307264-da0ec9d70304", "1597733336794-12d05021d510",
-  "1517646284732-d660da5f86ae", "1533130061792-64b345e4a833", "1550009158-9ebf69173e03", "1571175452281-06618ef9dcca",
-  "1560391443-441630c7287d", "1503387762-592dea58ef21", "1585338107529-13afc5f0141f", "1610945661297-401fabb0e8c1",
-  "1521791136064-7986c2920216", "1519389950473-47ba0277781c", "1504384308090-c894fdcc538d", "1588872657578-7efd1f1555ed",
-  "1593642632823-8f785ba67e45", "1530046339160-ce3e5b0c7a2f", "1454165833222-d1dca7e33526", "1504328345606-18bbc8c9d7d1",
-  "1581092160562-40aa08e78837", "1517048676732-d67bc947f9f2", "1556910103-1c02745aae4d", "1504917595217-d4dc5f64d041",
-  "1576678927484-cc907957088c", "1513506003901-1e6a229e2d15"
-];
-
-async function insertData() {
-  console.log('Starting data insertion...');
-
-  // 1. Clear existing data
-  console.log('Clearing existing data...');
-  await supabase.from('users').delete().neq('id', 0);
-
-  // 2. Prepare only 90 shops with GUARANTEED pictures
-  const finalShops = [];
-  const seenNames = new Set();
-  
-  // Use a simple counter to rotate through workingIds
-  let idCounter = 0;
-
-  for (const shop of shopsData) {
-    if (finalShops.length >= 90) break;
-
-    const normName = shop.name.trim().toLowerCase();
-    if (!seenNames.has(normName)) {
-      const id = workingIds[idCounter % workingIds.length];
-      idCounter++;
-
-      let address = shop.address.trim();
-      if (!address.toLowerCase().includes('india')) {
-        address += ', India';
-      }
-
-      finalShops.push({
-        name: shop.name,
-        mobile: shop.mobile || 'N/A',
-        address: address,
-        photo: `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`
-      });
-      seenNames.add(normName);
-    }
-  }
-
-  console.log(`Inserting ${finalShops.length} shops with verified working URLs...`);
-
-  // 3. Batch Insert
-  const { error } = await supabase.from('users').insert(finalShops);
-
-  if (error) {
-    console.error('Error inserting data:', error.message);
-  } else {
-    console.log(`Successfully inserted ${finalShops.length} shops with 100% verified pictures.`);
-  }
-}
-
-insertData();
