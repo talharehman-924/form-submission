@@ -1,0 +1,76 @@
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config({ override: true });
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+const fs = require('fs');
+const path = require('path');
+
+console.log('SUPABASE_URL:', SUPABASE_URL);
+console.log('SUPABASE_SERVICE_KEY length:', SUPABASE_SERVICE_KEY ? SUPABASE_SERVICE_KEY.length : 0);
+if (SUPABASE_SERVICE_KEY) console.log('Key starts with:', SUPABASE_SERVICE_KEY.substring(0, 10));
+
+const shopsData = [
+  {"name": "Ac Repair and Service Centre", "address": "Near Taltala, Kolkata, West Bengal 700016, India", "mobile": "+91 62908 75643"},
+  {"name": "A TO Z COOLING CENTER", "address": "Kolkata, West Bengal, India", "mobile": "+91 98307 68650"},
+  {"name": "Chill Point Car AC Care", "address": "AF 228, Near 7 No, Rabindrapally, Kestopur, Kolkata, West Bengal 700102, India", "mobile": "+91 98308 02491"},
+  {"name": "Starlite Service Centre", "address": "Chowringhee North, Bow Barracks, Kolkata, West Bengal 700013, India", "mobile": ""},
+  {"name": "Royal Refrigeration Showroom", "address": "20 A, Haji Md. Mohsin Square, Taltala, Kolkata, West Bengal 700016, India", "mobile": "+91 90511 50837"},
+  {"name": "Shyama Automobiles", "address": "23, Crematorium St, Beniapukur, Kolkata, West Bengal 700014, India", "mobile": "+91 93309 90347"},
+  {"name": "Technology infinity", "address": "52A, Biplabi Anukul Chandra St, Bowbazar, Kolkata, West Bengal 700072, India", "mobile": "+91 91639 46313"},
+  {"name": "Technology Infinity", "address": "95A, Narkeldanga N Rd, Ward Number 11, Kolkata, West Bengal 700011, India", "mobile": "+91 91639 46313"},
+  {"name": "AC Repairing and Servicing", "address": "107, Ripon St, Esplanade, Taltala, Kolkata, West Bengal 700016, India", "mobile": "+91 82409 34715"},
+  {"name": "N S COOLING SERVICE", "address": "31, Pemantle St, Kolkata, West Bengal 700016, India", "mobile": ""},
+  {"name": "Jitco Technolab(Kolkata)", "address": "DumDum Rd, Kolkata, West Bengal 700030, India", "mobile": "+91 82406 69600"},
+  {"name": "G S DISTRIBUTOR - AC DEALER", "address": "157 B, Lenin Sarani Rd, Chandni Chawk, Bowbazar, Kolkata, West Bengal 700072, India", "mobile": "+91 62908 81433"},
+  {"name": "Technology Infinity (Park St)", "address": "57, Park St, Park Street area, Kolkata, West Bengal 700016, India", "mobile": "+91 91639 46313"},
+  {"name": "Milon Aircon", "address": "Kolkata, West Bengal, India", "mobile": "+91 83348 66149"},
+  {"name": "HLS COOLING CENTRE", "address": "Princep St, Kolkata, West Bengal 700072, India", "mobile": ""},
+  {"name": "Ranajit Electric & Electronics", "address": "16 Phears Lane, near MEDICAL COLLEGE, Bowbazar, Kolkata, West Bengal 700012, India", "mobile": "+91 80133 61910"},
+  {"name": "Shree Ganpati Refrigeration", "address": "23, Chittaranjan Ave, Taltala, Kolkata, West Bengal 700001, India", "mobile": "+91 98317 66227"},
+  {"name": "Raul Refrigeration", "address": "Kolkata, West Bengal, India", "mobile": "+91 87775 79186"},
+  {"name": "A. R. Indec", "address": "1B, Chatu Babu Ln, Entally, Kolkata, West Bengal 700014, India", "mobile": "+91 87773 54696"},
+  {"name": "National Aircon", "address": "Kolkata, West Bengal, India", "mobile": ""},
+  {"name": "Authorised Samsung Service Center", "address": "E Mall, Chittaranjan Ave, Kolkata, West Bengal 700072, India", "mobile": "+91 93304 68876"},
+  {"name": "Rental Service India", "address": "34, Chittaranjan Ave, Bowbazar, Kolkata, West Bengal 700012, India", "mobile": "+91 91638 66044"},
+  {"name": "Daichi service centre", "address": "75, Metcalfe St, Dharmatala, Taltala, Kolkata, West Bengal 700013, India", "mobile": ""},
+  {"name": "Service on Wheel", "address": "435/1, Grand Trunk Rd, Kolkata, West Bengal 711101, India", "mobile": "+91 89815 35599"},
+  {"name": "laptop doctor", "address": "E-mall, Shop No 326, Third Floor, Chittaranjan Ave, Kolkata, West Bengal 700072, India", "mobile": "+91 97171 81113"},
+  {"name": "Asus Exclusive Service Centre", "address": "6A, Raja Subodh Mullick Square Rd, Kolkata, West Bengal 700012, India", "mobile": "+91 33 4030 1932"},
+  {"name": "GoMechanic - Car Insurance Repair", "address": "1A, Mullick Bazar, Park Street area, Kolkata, West Bengal 700017, India", "mobile": "+91 83989 70970"},
+  {"name": "Mitsubishi Ac Repair & Service Center", "address": "Park Street area, Kolkata, West Bengal 700016, India", "mobile": ""},
+  {"name": "Modern Air Condition", "address": "157B, Lenin Sarani Rd, Kolkata, West Bengal 700013, India", "mobile": ""},
+  {"name": "Ref Air Care", "address": "Kolkata, West Bengal, India", "mobile": "+91 70036 97226"}
+];
+
+const PHOTO_URL = "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=800&q=80";
+
+async function insertData() {
+  console.log('Starting data insertion...');
+  
+  // Backup to JSON file
+  const backupPath = path.join(__dirname, 'scraped_shops.json');
+  fs.writeFileSync(backupPath, JSON.stringify(shopsData, null, 2));
+  console.log(`Saved backup of ${shopsData.length} shops to ${backupPath}`);
+
+  const insertPayload = shopsData.map(shop => ({
+    name: shop.name,
+    mobile: shop.mobile || 'N/A',
+    address: shop.address,
+    photo: PHOTO_URL
+  }));
+
+  const { data, error } = await supabase.from('users').insert(insertPayload);
+
+  if (error) {
+    console.error('Error inserting data:', error.message);
+    if (error.hint) console.error('Hint:', error.hint);
+    if (error.details) console.error('Details:', error.details);
+  } else {
+    console.log(`Successfully inserted ${insertPayload.length} shops into the users table.`);
+  }
+}
+
+insertData();
